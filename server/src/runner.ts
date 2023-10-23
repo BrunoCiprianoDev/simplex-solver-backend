@@ -15,13 +15,14 @@ solver.insertRestrictions(restriction1);
 solver.insertRestrictions(restriction2);
 solver.insertRestrictions(restriction3);
 
-solver.printTable();
-const entryColumn = solver.getIndexEntryColumn() as number;
 
-console.log("Coluna pivot:" + entryColumn + " -> Coluna:" + solver.getColumn(entryColumn));
-const pivotLineIndex = solver.getPivotLine(entryColumn);
-console.log("Linha pivot:" + pivotLineIndex + " -> Linha: " + solver.getRow(pivotLineIndex));
+// const indexEntryColumn = solver.getIndexEntryColumn();
+// const indexPivotLine = solver.getPivotLine(indexEntryColumn);
+// let pivotLine = solver.getLineByIndex(indexPivotLine);
+// pivotLine = solver.calculateNewPivotLine(indexEntryColumn, pivotLine);
 
+// const updatedLine = solver.updateLine([-3, -5, 0, 0, 0, 0], indexEntryColumn, pivotLine);
+//console.log(updatedLine);
+//line: number[], entryColumn: number, pivotLine: number[]
 
-const currentLine = [2, 3, 0, 0, 1, 21];
-console.log(solver.calculateNewLine(currentLine, entryColumn, [0, 1, 0, 0.5, 0, 6]));
+solver.calculate();

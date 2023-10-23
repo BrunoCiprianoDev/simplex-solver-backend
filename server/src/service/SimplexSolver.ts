@@ -1,9 +1,13 @@
 class SimplexSolver {
 
   private _table: number[][];
+  private _verticalVariables: string[];
+  private _horizontalVariables: string[];
 
   constructor() {
     this._table = [];
+    this._verticalVariables = [];
+    this._horizontalVariables = [];
   }
 
   public createObjetiveFunction(objetiveFunction: number[]) {
@@ -38,11 +42,9 @@ class SimplexSolver {
     return minIndex; // Retorna o INDICE da coluna com menor valor
   }
 
-
-
   public getPivotLine(indexEntryColumn: number): number {
 
-    const entryColumn = this.getColumn(indexEntryColumn);
+    const entryColumn = this.getColumnByIndex(indexEntryColumn);
 
     const metadata: Record<number, number> = {};
 
@@ -64,22 +66,36 @@ class SimplexSolver {
   }
 
 
+  // Divide toda linha pivot pelo elemento da coluna que entrou
+  public calculateNewPivotLine(entryColumn: number, currentPivotLine: number[]) {
+    const elementEntryColumn = currentPivotLine[entryColumn];
+
+    const newPivotLine: number[] = [];
+    for (let i = 0; i < currentPivotLine.length; i++) {
+      const newValue = currentPivotLine[i] / elementEntryColumn;
+      newPivotLine.push(newValue);
+    }
+
+    return newPivotLine;
+
+  }
+
   // Calcular as novas linhas da matriz
-  public calculateNewLine(line: number[], entryColumn: number, pivotLine: number[]): number[] {
-    const pivot = line[entryColumn] * -1;
-    const resultLine = pivotLine.map((value) => value * pivot);
+  public calculateNewLine(oldLine: number[], indexEntryColumn: number, pivotLine: number[]): number[] {
+    const pivotElementLine = oldLine[indexEntryColumn] * -1;
 
     const newLine: number[] = [];
-    for (let i = 0; i < resultLine.length; i++) {
-      const sumValue = resultLine[i] + line[i];
-      newLine.push(sumValue);
+    for (let index = 0; index < pivotLine.length; index++) {
+      const newValue = oldLine[index] + (pivotLine[index] * pivotElementLine);
+      newLine.push(newValue);
     }
 
     return newLine;
+
   }
 
-  //Pega todos os valores em uma coluna da tabela
-  public getColumn(columnIndex: number): number[] {
+  //Retorna uma coluna pelo indice
+  public getColumnByIndex(columnIndex: number): number[] {
     if (columnIndex < 0 || columnIndex >= this._table[0].length) {
       throw new Error('O índice da coluna está fora dos limites.');
     }
@@ -87,20 +103,49 @@ class SimplexSolver {
     return column;
   }
 
-  //Pega todos os valores de uma linha
-  public getRow(rowIndex: number): number[] {
-    if (rowIndex < 0 || rowIndex >= this._table.length) {
+  //Retorna uma linha pelo indice
+  public getLineByIndex(lineIndex: number): number[] {
+    if (lineIndex < 0 || lineIndex >= this._table.length) {
       throw new Error('O índice da linha está fora dos limites.');
     }
 
-    const row: number[] = this._table[rowIndex];
+    const line: number[] = this._table[lineIndex];
 
-    return row;
+    return line;
   }
 
+  //Verifica se há valores negativos na linha da função objetiva
+  public hasNegativeValuesInObjectiveFunction(): boolean {
+    return this._table[0].some((value) => value < 0);
+  }
 
   public printTable(): void {
     console.log(this._table[0] + '\n' + this._table[1] + '\n', this._table[2] + '\n', this._table[3] + '\n');
+  }
+
+  public calculate() {
+
+    const indexEntryColumn = this.getIndexEntryColumn();
+    const column = this.getColumnByIndex(indexEntryColumn);
+
+    const pivotLineIndex = this.getPivotLine(indexEntryColumn);
+    const pivotLine = this.getLineByIndex(pivotLineIndex);
+    const newPivotLine = this.calculateNewPivotLine(indexEntryColumn, pivotLine);
+
+    this._table[pivotLineIndex] = newPivotLine;
+
+    for (let lineIndex = 0; lineIndex < column.length; lineIndex++) {
+      if (lineIndex !== pivotLineIndex) {
+        const currentLine = this.getLineByIndex(lineIndex);
+        this._table[lineIndex] = this.calculateNewLine(currentLine, indexEntryColumn, newPivotLine);
+      }
+    }
+
+    this.printTable();
+
+    if (this.hasNegativeValuesInObjectiveFunction()) {
+      this.calculate();
+    }
   }
 }
 
