@@ -6,6 +6,7 @@
   "author": "BrunoCiprianoDev <cipriano990@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "local": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/runner",
     "start": "node dist/server.js",
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server",
     "lint": "eslint . --ext .ts",
@@ -33,6 +34,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "express-async-errors": "^3.1.1"
+    "express-async-errors": "^3.1.1",
+    "mathjs": "^11.11.2"
   }
 }
