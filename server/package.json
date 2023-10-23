@@ -6,8 +6,8 @@
   "author": "BrunoCiprianoDev <cipriano990@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/shared/http/server.js",
-    "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/shared/http/server",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
     "build": "rimraf dist && tsc",
