@@ -1,10 +1,12 @@
 class SimplexSolver {
 
+    private _quantitRestrictions: number;
     private _table: number[][];
     private _verticalVariables: string[];
     private _horizontalVariables: string[];
 
     constructor() {
+        this._quantitRestrictions = 0;
         this._table = [];
         this._verticalVariables = [];
         this._horizontalVariables = [];
@@ -16,23 +18,26 @@ class SimplexSolver {
 
     public insertRestrictions(restriction: number[]) {
         this._table.push(restriction);
+        this._quantitRestrictions++;
     }
 
-    public createListVariables(numberOfVariables: number) {
+    public initListVariables() {
+        const objetiveLine = this._table[0];
 
-        for (let index = 1; index <= numberOfVariables; index++) {
-            this._horizontalVariables.push(`X${index}`);
+        for (let index = 0; index < objetiveLine.length; index++) {
+            if (objetiveLine[index] !== 0) {
+                this._horizontalVariables.push(`X${index + 1}`);
+            }
         }
 
         this._verticalVariables.push(`Z`);
-        for (let index = 1; index <= numberOfVariables; index++) {
+        for (let index = 1; index <= this._quantitRestrictions; index++) {
             const slack = `F${index}`;
             this._horizontalVariables.push(slack);
             this._verticalVariables.push(slack);
         }
 
         this._horizontalVariables.push(`P`);
-
     }
 
     public updateListVariables(indexPivotLine: number, indexColumn: number) {
@@ -144,9 +149,7 @@ class SimplexSolver {
     }
 
     public printTable(): void {
-        console.log("Horizontal var: " + this._horizontalVariables);
-        console.log("Vertical var: " + this._verticalVariables);
-        console.log(this._table[0] + '\n' + this._table[1] + '\n', this._table[2] + '\n', this._table[3] + '\n');
+
     }
 
     // Obtem os resultados por variaveis
@@ -174,33 +177,37 @@ class SimplexSolver {
 
         itemsResult.push(zResult);
 
-        console.log(itemsResult);
+        return itemsResult;
 
     }
 
     public calculate() {
 
-        const indexEntryColumn = this.getIndexEntryColumn();
-        const column = this.getColumnByIndex(indexEntryColumn);
+        this.initListVariables();
 
-        const pivotLineIndex = this.getPivotLine(indexEntryColumn);
-        const pivotLine = this.getLineByIndex(pivotLineIndex);
-        const newPivotLine = this.calculateNewPivotLine(indexEntryColumn, pivotLine);
+        while (this.hasNegativeValuesInObjectiveFunction()) {
 
-        this._table[pivotLineIndex] = newPivotLine;
+            const indexEntryColumn = this.getIndexEntryColumn();
+            const column = this.getColumnByIndex(indexEntryColumn);
 
-        for (let lineIndex = 0; lineIndex < column.length; lineIndex++) {
-            if (lineIndex !== pivotLineIndex) {
-                const currentLine = this.getLineByIndex(lineIndex);
-                this._table[lineIndex] = this.calculateNewLine(currentLine, indexEntryColumn, newPivotLine);
+            const pivotLineIndex = this.getPivotLine(indexEntryColumn);
+            const pivotLine = this.getLineByIndex(pivotLineIndex);
+            const newPivotLine = this.calculateNewPivotLine(indexEntryColumn, pivotLine);
+
+            this._table[pivotLineIndex] = newPivotLine;
+
+            for (let lineIndex = 0; lineIndex < column.length; lineIndex++) {
+                if (lineIndex !== pivotLineIndex) {
+                    const currentLine = this.getLineByIndex(lineIndex);
+                    this._table[lineIndex] = this.calculateNewLine(currentLine, indexEntryColumn, newPivotLine);
+                }
             }
+
+            this.updateListVariables(pivotLineIndex, indexEntryColumn);
         }
 
-        this.updateListVariables(pivotLineIndex, indexEntryColumn);
+        return this.getResults();
 
-        if (this.hasNegativeValuesInObjectiveFunction()) {
-            this.calculate();
-        }
     }
 
 
