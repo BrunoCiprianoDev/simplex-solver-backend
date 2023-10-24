@@ -149,7 +149,8 @@ class SimplexSolver {
     }
 
     public printTable(): void {
-
+        console.log("Verical variables:" + this._verticalVariables);
+        console.log("Horizontal variables:" + this._horizontalVariables);
     }
 
     // Obtem os resultados por variaveis
