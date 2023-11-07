@@ -48,14 +48,14 @@ try {
     }
 }
 
+/*
+simplexSolverService.insertObjetiveFunction([-3, -5, 0, 0, 0, 0]);
 
-// simplexSolverService.insertObjetiveFunction([-3, -5, 0, 0, 0, 0]);
+simplexSolverService.insertConstraint([1, 0, 1, 0, 0, 4]);
+simplexSolverService.insertConstraint([0, 2, 0, 1, 0, 12]);
+simplexSolverService.insertConstraint([2, 3, 0, 0, 1, 21]);
 
-// simplexSolverService.insertConstraint([1, 0, 1, 0, 0, 4]);
-// simplexSolverService.insertConstraint([0, 2, 0, 1, 0, 12]);
-// simplexSolverService.insertConstraint([2, 3, 0, 0, 1, 21]);
+const result = simplexSolverService.calculate();
 
-// const result = simplexSolverService.calculate();
-
-// console.log(result);
+console.log(result); */
 
